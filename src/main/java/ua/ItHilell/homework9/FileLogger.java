@@ -16,7 +16,9 @@ public class FileLogger {
         sb.append(LocalDateTime.now()).append(" ").append(LoggingLevel.DEBUG).append(" Massage: ").append(massage);
 
         if (FileLoggerConfiguration.getFile().length() >= FileLoggerConfiguration.getMaxSize()) {
-            throw new FileMaxSizeReachedException();
+            throw new FileMaxSizeReachedException("The maximum file size: " + FileLoggerConfiguration.getMaxSize() +
+                    " bytes. Current file size: " + FileLoggerConfiguration.getFile().length() + " bytes. The file location is: " +
+                    FileLoggerConfiguration.getFile().getCanonicalPath());
         } else {
             os.write(sb.toString().getBytes());
         }
@@ -33,7 +35,9 @@ public class FileLogger {
         sb.append(LocalDateTime.now()).append(" ").append(LoggingLevel.INFO).append(" Massage: ").append(massage);
 
         if (FileLoggerConfiguration.getFile().length() >= FileLoggerConfiguration.getMaxSize()) {
-            throw new FileMaxSizeReachedException();
+            throw new FileMaxSizeReachedException("The maximum file size: " + FileLoggerConfiguration.getMaxSize() +
+                    " bytes. Current file size: " + FileLoggerConfiguration.getFile().length() + " bytes. The file location is: " +
+                    FileLoggerConfiguration.getFile().getCanonicalPath());
         } else {
             os.write(sb.toString().getBytes());
         }
