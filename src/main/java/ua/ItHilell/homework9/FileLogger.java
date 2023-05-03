@@ -49,7 +49,6 @@ public class FileLogger {
         if (loggingLevel == LoggingLevel.INFO) {
             info(massage);
         } else if (loggingLevel == LoggingLevel.DEBUG) {
-            info(massage);
             debug(massage);
         }
     }
