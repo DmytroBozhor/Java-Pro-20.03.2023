@@ -42,35 +42,22 @@ public class Server {
 
         @Override
         public void run() {
-            sentNotificationToActiveClients();
-
-            try {
-                DataInputStream is = new DataInputStream(clientSocket.getInputStream());
-                DataOutputStream os = new DataOutputStream(clientSocket.getOutputStream());
-
-                while (true) {
-                    String clientMessage = is.readUTF();
-                    System.out.println("From client " + clientMessage);
-                    os.writeUTF("You've sent " + clientMessage);
-                    os.flush();
-                }
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            this.sentNotificationToActiveClients();
 
         }
 
-        private static void sentNotificationToActiveClients() {
+        private void sentNotificationToActiveClients() {
             for (ClientConnection clientConnection : clientList) {
-                try {
-                    if (!clientConnection.clientSocket.isClosed()) {
-                        DataOutputStream os = new DataOutputStream(clientConnection.clientSocket.getOutputStream());
-                        os.writeUTF("[SERVER] " + clientConnection.clientName + " успішно підключився.");
-                        os.close();
+                if (!clientConnection.clientSocket.isClosed()) {
+                    try {
+                        OutputStream os = clientConnection.clientSocket.getOutputStream();
+                        os.write(("[SERVER] " + clientName + " успішно підключився.").getBytes());
+                        os.flush();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                } else {
+                    System.out.println(clientConnection.clientName + " is inactive");
                 }
             }
         }

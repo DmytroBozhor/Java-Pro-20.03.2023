@@ -1,6 +1,5 @@
 package ua.ItHilell.homework22;
 
-import javax.print.attribute.standard.PDLOverrideSupported;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -13,23 +12,32 @@ public class Client {
         try (Socket socket = new Socket()) {
             socket.connect(new InetSocketAddress("localhost", 8080));
 
-            DataInputStream is = new DataInputStream(socket.getInputStream());
-            DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+            Thread osThread = new Thread(() -> {
+                try {
+                    InputStream is = socket.getInputStream();
+                    Scanner scanner = new Scanner(is);
+                    while (scanner.hasNextLine()) {
+                        System.out.println(scanner.nextLine());
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println("New thread has been activated!");
+            });
+
+            osThread.start();
+
+            /*InputStream is = socket.getInputStream();
+            DataInputStream dis = new DataInputStream(is);
+            System.out.println(dis.readUTF());
+            is.close();
+            dis.close();
+*/
+            OutputStream os = socket.getOutputStream();
 
             while (true) {
-                Scanner scanner = new Scanner(System.in);
-                String clientMessage = scanner.nextLine();
-
-                if ("exit".equals(clientMessage)) {
-                    break;
-                }
-
-                os.writeUTF(clientMessage);
-                os.flush();
-
-                String serverMessage = is.readUTF();
-                System.out.println(serverMessage);
-
+                Scanner scanner1 = new Scanner(System.in);
+                scanner1.next();
             }
         }
 
