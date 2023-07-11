@@ -1,4 +1,4 @@
-package ua.ItHilell.homework22;
+package org.example;
 
 import org.apache.commons.io.IOUtils;
 
@@ -32,13 +32,16 @@ public class Client {
 
             while (true) {
                 Scanner scanner1 = new Scanner(System.in);
+
                 String clientMessage = scanner1.nextLine();
 
                 dos.writeUTF(clientMessage);
 
                 if ("exit".equals(clientMessage)) {
                     break;
+
                 } else if (clientMessage.startsWith("file")) {
+
                     File file = new File(clientMessage.replace("file ", ""));
 
                     dos.writeUTF(file.getName());

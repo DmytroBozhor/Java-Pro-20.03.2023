@@ -1,4 +1,4 @@
-package ua.ItHilell.homework22;
+package org.example;
 
 import org.apache.commons.io.IOUtils;
 
@@ -63,7 +63,6 @@ public class Server {
                             activeClients.remove(this);
                             active = false;
                         } else if (clientMessage.startsWith("file")) {
-//                            String fileName = clientMessage.substring(clientName.lastIndexOf("/") + 1);
 
                             String fileName = dataInputStream.readUTF();
                             long fileLength = dataInputStream.readLong();
@@ -74,7 +73,7 @@ public class Server {
 
                             IOUtils.write(buffer, new FileOutputStream("C:\\Users\\ddima\\Desktop\\server\\" + fileName));
 
-                            dataOutputStream.writeUTF("File was successfully transfered!");
+                            dataOutputStream.writeUTF("File was successfully transferred!");
 
                         } else {
                             this.sentNotificationToActiveClients(clientName + ": " + clientMessage);
