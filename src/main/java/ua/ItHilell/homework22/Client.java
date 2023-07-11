@@ -1,5 +1,7 @@
 package ua.ItHilell.homework22;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -12,35 +14,45 @@ public class Client {
         try (Socket socket = new Socket()) {
             socket.connect(new InetSocketAddress("localhost", 8080));
 
+            DataInputStream dis = new DataInputStream(socket.getInputStream());
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+
             Thread osThread = new Thread(() -> {
                 try {
-                    InputStream is = socket.getInputStream();
-                    Scanner scanner = new Scanner(is);
-                    while (scanner.hasNextLine()) {
-                        System.out.println(scanner.nextLine());
+                    while (true) {
+                        System.out.println(dis.readUTF());
+                        Thread.sleep(1000);
                     }
-                } catch (IOException e) {
+                } catch (IOException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println("New thread has been activated!");
             });
-
+            osThread.setDaemon(true);
             osThread.start();
-
-            /*InputStream is = socket.getInputStream();
-            DataInputStream dis = new DataInputStream(is);
-            System.out.println(dis.readUTF());
-            is.close();
-            dis.close();
-*/
-            OutputStream os = socket.getOutputStream();
 
             while (true) {
                 Scanner scanner1 = new Scanner(System.in);
-                scanner1.next();
+                String clientMessage = scanner1.nextLine();
+
+                dos.writeUTF(clientMessage);
+
+                if ("exit".equals(clientMessage)) {
+                    break;
+                } else if (clientMessage.startsWith("file")) {
+                    File file = new File(clientMessage.replace("file ", ""));
+
+                    dos.writeUTF(file.getName());
+                    dos.writeLong(file.length());
+
+                    byte[] buffer = new byte[(int) file.length()];
+
+                    IOUtils.readFully(new FileInputStream(file), buffer);
+
+                    dos.write(buffer);
+
+                }
             }
         }
-
-
     }
 }
+
